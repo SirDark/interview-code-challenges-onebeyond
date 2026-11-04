@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using OneBeyondApi.DataAccess;
 using OneBeyondApi.DTOs;
+using OneBeyondApi.Exceptions;
 using OneBeyondApi.Model;
 
 namespace OneBeyondApi.Controllers;
@@ -20,7 +21,7 @@ public class LoanController : ControllerBase
     }
 
     [HttpGet("OnLoan")]
-    public ActionResult<List<ActiveBorrowers>> OnLoan()
+    public ActionResult<List<ActiveBorrowers>> GetLoans()
     {
         _logger.LogInformation("Getting borrowers information");
         
@@ -33,6 +34,29 @@ public class LoanController : ControllerBase
         var activeBorrowers = ActiveBorrowers.fromBookStock(borrowers);
 
         return Ok(activeBorrowers);
+    }
+
+    [HttpPost("OnLoan")]
+    public IActionResult ReturnLoan([FromBody] Guid bookStockId)
+    {
+        try
+        {
+            _logger.LogInformation($"Returning book with stock id: {bookStockId}");
+            _catalogueRepository.ReturnBook(bookStockId);
+
+        }
+        catch (BookStockNotFoundException)
+        {
+            _logger.LogError($"Did not find bookstock with id: {bookStockId}");
+            return NotFound($"Did not find book stock with id: {bookStockId}");
+        }
+        catch (BookNotLoanedException)
+        {
+            _logger.LogError($"Book stock is not loaned with id: {bookStockId}");
+            return BadRequest($"Book stock is not loaned with id: {bookStockId}");
+        }
+
+        return Ok();
     }
 }
 
