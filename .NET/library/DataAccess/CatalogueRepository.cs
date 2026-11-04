@@ -44,5 +44,16 @@ namespace OneBeyondApi.DataAccess
                 return list.ToList();
             }
         }
+        public List<BookStock>? GetBorrowers()
+        {
+            using (var context = new LibraryContext())
+            {
+                var list = context.Catalogue
+                    .Include(x => x.OnLoanTo)
+                    .Include(x => x.Book)
+                    .Where(x => x.OnLoanTo != null);
+                return list.ToList();
+            }
+        }
     }
 }
