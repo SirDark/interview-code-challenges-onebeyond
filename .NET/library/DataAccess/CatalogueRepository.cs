@@ -34,14 +34,16 @@ public class CatalogueRepository : ICatalogueRepository
 
             if (search != null)
             {
-                if (!string.IsNullOrEmpty(search.Author)) {
+                if (!string.IsNullOrEmpty(search.Author))
+                {
                     list = list.Where(x => x.Book.Author.Name.Contains(search.Author));
                 }
-                if (!string.IsNullOrEmpty(search.BookName)) {
+                if (!string.IsNullOrEmpty(search.BookName))
+                {
                     list = list.Where(x => x.Book.Name.Contains(search.BookName));
                 }
             }
-                
+
             return list.ToList();
         }
     }
@@ -83,11 +85,12 @@ public class CatalogueRepository : ICatalogueRepository
 
     public BookStock GetBookStock(Guid id)
     {
-        using (var context = new LibraryContext()) {
+        using (var context = new LibraryContext())
+        {
             var bookStock = context.Catalogue
                .Include(x => x.OnLoanTo)
-               .Include (x => x.Book)
-               .Include(x=> x.Reservation)
+               .Include(x => x.Book)
+               .Include(x => x.Reservation)
                .FirstOrDefault(x => x.Id == id);
 
             if (bookStock == null)

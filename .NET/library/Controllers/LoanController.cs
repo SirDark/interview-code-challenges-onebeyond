@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
+﻿using Microsoft.AspNetCore.Mvc;
 using OneBeyondApi.DataAccess;
 using OneBeyondApi.DTOs;
 using OneBeyondApi.Exceptions;
-using OneBeyondApi.Model;
 using OneBeyondApi.Services;
-using System.Linq.Expressions;
 
 namespace OneBeyondApi.Controllers;
 
@@ -14,10 +10,10 @@ namespace OneBeyondApi.Controllers;
 [ApiController]
 public class LoanController : ControllerBase
 {
-    private ICatalogueRepository _catalogueRepository;
-    private ILogger<LoanController> _logger;
+    private readonly ICatalogueRepository _catalogueRepository;
+    private readonly ILogger<LoanController> _logger;
     private readonly ILoanService _loanService;
-    public LoanController(ICatalogueRepository catalogueRepository,ILoanService loanService, ILogger<LoanController> logger)
+    public LoanController(ICatalogueRepository catalogueRepository, ILoanService loanService, ILogger<LoanController> logger)
     {
         _catalogueRepository = catalogueRepository;
         _logger = logger;
@@ -28,9 +24,9 @@ public class LoanController : ControllerBase
     public ActionResult<List<ActiveBorrowers>> GetLoans()
     {
         _logger.LogInformation("Getting borrowers information");
-        
+
         var borrowers = _catalogueRepository.GetBorrowers();
-        if(borrowers == null)
+        if (borrowers == null)
         {
             _logger.LogInformation("No borrowers, returning empty list");
             return new List<ActiveBorrowers>();
@@ -83,7 +79,7 @@ public class LoanController : ControllerBase
             _logger.LogError($"no BookStock found with id: {bookStockId}");
             return NotFound($"no BookStock found with id: {bookStockId}");
         }
-        
+
     }
     [HttpPost("Reservation")]
     public IActionResult CreateBookReservation(Guid bookStockId, Guid borrowerId)
@@ -98,7 +94,7 @@ public class LoanController : ControllerBase
             _logger.LogError($"BookStockNotFound {bookStockId}");
             return NotFound($"Book Stock Not Found with id: {bookStockId}");
         }
-        catch (AlreadyReservedException )
+        catch (AlreadyReservedException)
         {
             _logger.LogError($"AlreadyReserved {bookStockId}");
             return BadRequest($"Book Stock already reserved id: {bookStockId}");

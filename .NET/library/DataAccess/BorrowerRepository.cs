@@ -32,7 +32,7 @@ namespace OneBeyondApi.DataAccess
         public void AddFine(Fine fine)
         {
             using (var context = new LibraryContext())
-            { 
+            {
                 context.Fines.Add(fine);
                 context.SaveChanges();
             }
