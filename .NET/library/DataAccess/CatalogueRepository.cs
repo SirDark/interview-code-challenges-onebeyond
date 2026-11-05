@@ -86,12 +86,33 @@ public class CatalogueRepository : ICatalogueRepository
         using (var context = new LibraryContext()) {
             var bookStock = context.Catalogue
                .Include(x => x.OnLoanTo)
+               .Include (x => x.Book)
+               .Include(x=> x.Reservation)
                .FirstOrDefault(x => x.Id == id);
 
             if (bookStock == null)
                 throw new BookStockNotFoundException($"no BookStock found with id: {id}");
 
             return bookStock;
+        }
+    }
+
+    public void UpdateReservation(Guid id, Reservation? reservation)
+    {
+        using (var context = new LibraryContext())
+        {
+            var bookStock = context.Catalogue
+               .Include(x => x.OnLoanTo)
+               .Include(x => x.Book)
+               .Include(x => x.Reservation)
+               .FirstOrDefault(x => x.Id == id);
+
+            if (bookStock == null)
+                throw new BookStockNotFoundException($"no BookStock found with id: {id}");
+
+            bookStock.Reservation = reservation;
+
+            context.SaveChanges();
         }
     }
 }

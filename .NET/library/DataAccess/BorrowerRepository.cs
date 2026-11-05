@@ -37,5 +37,14 @@ namespace OneBeyondApi.DataAccess
                 context.SaveChanges();
             }
         }
+
+        public bool CheckIfBorrowerExists(Guid id)
+        {
+            using (var context = new LibraryContext())
+            {
+                var borrower = context.Borrowers.FirstOrDefault(x => x.Id == id);
+                return borrower != null;
+            }
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace OneBeyondApi.DataAccess
         public BookStock ReturnBook(Guid id);
 
         public BookStock GetBookStock(Guid id);
+        public void UpdateReservation(Guid id, Reservation? reservation);
     }
 }

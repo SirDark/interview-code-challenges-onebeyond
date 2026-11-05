@@ -16,6 +16,24 @@ public class LoanService : ILoanService
         _logger = logger;
     }
 
+    public void Reserve(Guid bookStockId, Guid borrowerId)
+    {
+        _logger.LogInformation($"Checking if borrower exists with id: {borrowerId}");
+
+        if(_borrowerRepository.CheckIfBorrowerExists(borrowerId) == false) 
+            throw new BorrowerNotFoundException("Borrower does not exist");
+
+        var bookStock = _catalogueRepository.GetBookStock(bookStockId);
+
+        if (bookStock.Reservation != null)
+            throw new AlreadyReservedException("bookstock already reserved");
+
+        Reservation reservation = new Reservation { ReservedTo = borrowerId };
+
+        _catalogueRepository.UpdateReservation(bookStockId, reservation);
+
+    }
+
     public void ReturnBook(Guid bookStockId)
     {
         _logger.LogInformation($"Getting bookstock with id: {bookStockId}");
@@ -43,7 +61,7 @@ public class LoanService : ILoanService
 
         _logger.LogInformation($"Returning book with stock id: {bookStockId}");
         _catalogueRepository.ReturnBook(bookStockId);
-
-        
     }
+
+
 }
