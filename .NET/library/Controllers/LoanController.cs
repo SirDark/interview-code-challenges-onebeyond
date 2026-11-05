@@ -5,6 +5,7 @@ using OneBeyondApi.DataAccess;
 using OneBeyondApi.DTOs;
 using OneBeyondApi.Exceptions;
 using OneBeyondApi.Model;
+using OneBeyondApi.Services;
 
 namespace OneBeyondApi.Controllers;
 
@@ -14,10 +15,12 @@ public class LoanController : ControllerBase
 {
     private ICatalogueRepository _catalogueRepository;
     private ILogger<LoanController> _logger;
-    public LoanController(ICatalogueRepository catalogueRepository, ILogger<LoanController> logger)
+    private readonly ILoanService _loanService;
+    public LoanController(ICatalogueRepository catalogueRepository,ILoanService loanService, ILogger<LoanController> logger)
     {
         _catalogueRepository = catalogueRepository;
         _logger = logger;
+        _loanService = loanService;
     }
 
     [HttpGet("OnLoan")]
@@ -42,8 +45,7 @@ public class LoanController : ControllerBase
         try
         {
             _logger.LogInformation($"Returning book with stock id: {bookStockId}");
-            _catalogueRepository.ReturnBook(bookStockId);
-
+            _loanService.ReturnBook(bookStockId);
         }
         catch (BookStockNotFoundException)
         {

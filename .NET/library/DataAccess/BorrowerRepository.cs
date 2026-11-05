@@ -1,4 +1,5 @@
-﻿using OneBeyondApi.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using OneBeyondApi.Model;
 
 namespace OneBeyondApi.DataAccess
 {
@@ -12,6 +13,7 @@ namespace OneBeyondApi.DataAccess
             using (var context = new LibraryContext())
             {
                 var list = context.Borrowers
+                    .Include(x => x.Fines)
                     .ToList();
                 return list;
             }
@@ -24,6 +26,15 @@ namespace OneBeyondApi.DataAccess
                 context.Borrowers.Add(borrower);
                 context.SaveChanges();
                 return borrower.Id;
+            }
+        }
+
+        public void AddFine(Fine fine)
+        {
+            using (var context = new LibraryContext())
+            { 
+                context.Fines.Add(fine);
+                context.SaveChanges();
             }
         }
     }

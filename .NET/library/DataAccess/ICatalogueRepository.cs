@@ -9,6 +9,8 @@ namespace OneBeyondApi.DataAccess
         public List<BookStock> SearchCatalogue(CatalogueSearch search);
 
         public List<BookStock>? GetBorrowers();
-        public void ReturnBook(Guid id);
+        public BookStock ReturnBook(Guid id);
+
+        public BookStock GetBookStock(Guid id);
     }
 }

@@ -57,7 +57,7 @@ public class CatalogueRepository : ICatalogueRepository
         }
     }
 
-    public void ReturnBook(Guid id)
+    public BookStock ReturnBook(Guid id)
     {
         using (var context = new LibraryContext())
         {
@@ -76,6 +76,22 @@ public class CatalogueRepository : ICatalogueRepository
             bookStock.OnLoanTo = null;
 
             context.SaveChanges();
+
+            return bookStock;
+        }
+    }
+
+    public BookStock GetBookStock(Guid id)
+    {
+        using (var context = new LibraryContext()) {
+            var bookStock = context.Catalogue
+               .Include(x => x.OnLoanTo)
+               .FirstOrDefault(x => x.Id == id);
+
+            if (bookStock == null)
+                throw new BookStockNotFoundException($"no BookStock found with id: {id}");
+
+            return bookStock;
         }
     }
 }
